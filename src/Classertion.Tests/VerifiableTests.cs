@@ -37,8 +37,10 @@ namespace Classertion.Tests
             _controller = new Controller(_interface.Object, _factory.Object, _provider.Object);
 
             // Act
+            _controller.DoSomeWork();
 
             // Assert
+            _factory.Verify();
         }
     }
 }

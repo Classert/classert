@@ -20,5 +20,10 @@ namespace Classertion.Tests
         internal Factory Factory => _factory;
 
         internal IProvider Provider => _provider;
+
+        internal void DoSomeWork()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
