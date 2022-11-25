@@ -1,15 +1,17 @@
 ﻿using System.ComponentModel;
-using System.Linq.Expressions;
 
-namespace Classertion
+namespace Classertion.Verification
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
     public interface IVerifiable : IFluentInterface
     {
         [EditorBrowsable(EditorBrowsableState.Never)]
-        string Name { get; }
-
-        [EditorBrowsable(EditorBrowsableState.Never)]
         void Verify();
+    }
+
+    public interface IVerifiable<T> : IVerifiable
+    {
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        Type Type { get; }
     }
 }

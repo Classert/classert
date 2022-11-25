@@ -2,6 +2,6 @@
 {
     public interface IClassertBuilder
     {
-        ITypeBuilder<T> GetBuilderForType<T>();
+        ITypeBuilder GetTypeBuilder(Action<SetupArgs>? argsProvider = null);
     }
 }

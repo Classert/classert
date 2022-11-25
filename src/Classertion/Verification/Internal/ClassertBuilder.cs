@@ -1,6 +1,4 @@
-﻿using System.Reflection.Emit;
-
-namespace Classertion.Internal
+﻿namespace Classertion.Verification.Internal
 {
     internal class ClassertBuilder : IClassertBuilder
     {
@@ -15,9 +13,9 @@ namespace Classertion.Internal
 
         public static IClassertBuilder Instance => _instance;
 
-        ITypeBuilder<T> IClassertBuilder.GetBuilderForType<T>()
+        ITypeBuilder IClassertBuilder.GetTypeBuilder(Action<SetupArgs>? argsProvider = null)
         {
-            return new ClassertTypeBuilder<T>(this);
+            return new ClassertTypeBuilder(AssemblyGenerator.Instance, argsProvider);
         }
     }
 }

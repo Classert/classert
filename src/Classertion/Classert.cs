@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Reflection;
 
 namespace Classertion
 {
@@ -10,46 +11,67 @@ namespace Classertion
         {
         }
 
-        public static Classert<T> Setup<T>() where T : class
+        internal static IClassertBuilder Builder
         {
-            var result = new Classert<T>(ClassertBuilder.Instance.GetBuilderForType<T>());
+            get { return ClassertBuilder.Instance; }
+        }
+
+        public static IClassert<T> Setup<T>(Action<SetupArgs>? argsProvider = null) where T : class
+        {
+            var result = new Classert<T>(Builder.GetTypeBuilder(argsProvider));
 
             _verifiables.Append(result);
 
             return result;
         }
+
+        internal static TMethod Register<TMethod>(IClassert classert, TMethod methodCall) where TMethod : IMethodCall
+        {
+            return classert.AddMethod(methodCall);
+        }
+
+        //internal static PropertyAccess<T, TResult>? Register<T, TResult>(IClassert<T> classert, PropertyAccess<T, TResult> propertyAccess) where T : class
+        //{
+        //    return (classert as Classert<T>)?.AddProperty(propertyAccess);
+        //}
     }
 
-    public class Classert<T> : Verifiable<T>, IVerifiable<T> where T : class
+    internal class Classert<T> : Verifiable<T>, IClassert<T>, IVerifiable<T> where T : class
     {
+        private readonly List<IMethodCall> Methods = new List<IMethodCall>();
+        //private readonly List<IVerifiable<T>> Properties = new List<IVerifiable<T>>();
+
         private readonly Lazy<T> _lazyObject;
+        private Type? _compiledType;
 
-        internal Classert(ITypeBuilder<T> builder) : base(builder)
+        internal Classert(ITypeBuilder builder)
         {
-            var type = builder.Type;
-
-            if (type.IsAbstract)
-            {
-
-            }
+            var type = typeof(T);
 
             if (type.IsSealed || type.IsEnum)
             {
                 throw new InvalidOperationException($"Type '{type.Name}' must be a non sealed/enum class.");
             }
 
-            _lazyObject = new Lazy<T>(() =>
-            {
-                return builder.Build();
-            });
+            _lazyObject = new Lazy<T>(() => builder.BuildType(this));
         }
 
-        public T Object
+        internal Type? GetCompiledType() => _compiledType;
+
+        Type? IClassert<T>.GetCompiledType() => _compiledType;
+
+        string IClassert<T>.TypeName => base.TypeName;
+
+        public T Object => _lazyObject.Value;
+
+        internal void SetCompiledType(Assembly assembly) => _compiledType = assembly.ExportedTypes.First(t => t.Name == TypeName);
+
+        void IClassert<T>.SetCompiledType(Assembly assembly) => SetCompiledType(assembly);
+
+        TMethod IClassert.AddMethod<TMethod>(TMethod methodCall)
         {
-            get
-            {
-                return _lazyObject.Value;
-            }
+            Methods.Add(methodCall);
+            return methodCall;
         }
     }
 }
