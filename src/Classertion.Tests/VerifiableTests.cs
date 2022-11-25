@@ -26,7 +26,7 @@ namespace Classertion.Tests
             
             _factory.Override(f => f.GoDoWork()).Calls(c =>
             {
-                var work = new Work("I overwrote the original result");
+                var work = new Work("I overwrote the original method to call this.");
             });
 
             // TODO: Add and It.IsAny<T> of some sort for mocking parameters.
