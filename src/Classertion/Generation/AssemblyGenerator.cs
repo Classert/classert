@@ -176,6 +176,7 @@ namespace Classertion.Generation
 
         private MethodDeclarationSyntax BuildMethodSignature(MethodInfo method)
         {
+            // TODO: Handle Generic typed returns..they're type names are nasty..
             var returnType = sf.ParseTypeName(method.ReturnParameter.ParameterType.Name ?? "void");
             var result = sf.MethodDeclaration(returnType, method.Name)
                 .AddModifiers(sf.Token(SyntaxKind.PublicKeyword));

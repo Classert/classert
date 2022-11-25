@@ -30,7 +30,7 @@ namespace Classertion.Verification.Internal
 
         void IMethodCall.Throws(Exception exception)
         {
-            throw new NotImplementedException();
+            _exception = exception;
         }
     }
 
@@ -70,12 +70,12 @@ namespace Classertion.Verification.Internal
 
         void IMethodCall<T, TReturn>.Call(Func<OverrideContext<T, TReturn>, TReturn> method)
         {
-            throw new NotImplementedException();
+            _func = method;
         }
 
         void IMethodCall<T>.Call(Action<OverrideContext<T>> method)
         {
-            throw new NotImplementedException();
+            _action = method;
         }
     }
 }
