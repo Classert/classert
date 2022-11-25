@@ -20,12 +20,25 @@ namespace Classertion.Tests
                 args.Args = _provider.Object;
             });
 
+
+            _factory.Override(f => f.GoDoYourWork(/* o1 T.Val<T> */null))
+                .ToThrow(new NullReferenceException());
+            
             _factory.Override(f => f.GoDoWork()).Calls(c =>
             {
                 var work = new Work("I overwrote the original result");
             });
 
-            _factory.Override(f => f.GoDoYourWork()).Calls(c => { return new Work("I overwrote the original result"); });
+            // TODO: Add and It.IsAny<T> of some sort for mocking parameters.
+
+            _factory.Override(f => f.GoDoYourWork(/* o1 T.Val<Object1> */null, /* o2 T.Val<Object2> */null)).Calls(c =>
+            {
+                var obj1 = c.Get<object>("o1"); // f.GoDoYourWork o1
+                var obj2 = c.Get<object>("o2"); // f.GoDoYourWork o2
+                
+                // TODO: I don't know if we should allow them to return here?
+                return new Work("I overwrote the original result");
+            });
 
             _interface.Override(i => i.Factory).Returns(() => _factory.Object);
         }

@@ -25,11 +25,11 @@
             return (P)param.Value;
         }
     }
-    public class OverrideContext<T, TReturn> where T : class
+    public class OverrideContext<T, TReturn> : OverrideContext<T> where T : class
     {
         private readonly List<OverrideParam> _paramters = new List<OverrideParam>();
 
-        internal OverrideContext(IClassert<T> parent, T value, IEnumerable<OverrideParam> parameters)
+        internal OverrideContext(IClassert<T> parent, IEnumerable<OverrideParam> parameters) : base(parent, parameters)
         {
         }
     }
